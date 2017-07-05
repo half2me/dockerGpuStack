@@ -8,7 +8,7 @@ Execute build.sh to build the ubuntu based image and install (all!) available op
 # Create a container 
 Execute ./run.sh in the corresponding subdirectory to get a bash prompt in the created docker container.
 
-#Testing the samples
+# Testing the samples
 A few examples of Dockerfiles are provided in the samples/ folder, these images can be used to quickly test the gpu stack on your machine. The samples are not available on the Docker Hub, you will need to build the images locally:
 	docker build --build-arg http_proxy="http://proxy-shz.intel.com:911/" -t sample:vainfoTest samples/vainfoTest/
 
