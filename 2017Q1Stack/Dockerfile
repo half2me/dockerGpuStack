@@ -58,3 +58,11 @@ RUN cd $mesa_installation_dir/libva && \
 	make install 
   
 #vaapi intel driver 1.8.0
+RUN cd $mesa_installation_dir/ && \
+	git clone https://github.com/01org/intel-vaapi-driver --depth 1 --branch 1.8.0 
+ENV PKG_CONFIG_PATH=$mesa_installation_dir/lib/pkgconfig/:$PKG_CONFIG_PATH
+RUN cd $mesa_installation_dir/intel-vaapi-driver && \
+	./autogen.sh CFLAGS='-O2' CXXFLAGS='-O2'  --prefix=$mesa_installation_dir \
+	--enable-wayland=0 && \
+	make -j8 && \
+	make install	
