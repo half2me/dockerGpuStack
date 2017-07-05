@@ -47,6 +47,14 @@ RUN cd $mesa_installation_dir/mesa && \
 	--with-egl-platforms=x11,drm --enable-texture-float --enable-gbm --enable-glx-tls --enable-dri3 --enable-debug && \
 	make -j8 && \
 	make install
-#libva 1.8.0
 
+#libva 1.8.0
+RUN cd $mesa_installation_dir/ && \
+	git clone https://github.com/01org/libva --depth 1 --branch 1.8.0 
+RUN cd $mesa_installation_dir/libva && \
+	./autogen.sh CFLAGS='-O2' CXXFLAGS='-O2' \
+	--prefix=$mesa_installation_dir --enable-wayland=0 && \
+	make -j8 && \
+	make install 
+  
 #vaapi intel driver 1.8.0
