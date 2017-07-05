@@ -31,14 +31,22 @@ ADD git-proxy.sh /usr/local/bin/git-proxy.sh
 RUN chmod +x /usr/local/bin/git-proxy.sh 
 ENV GIT_PROXY_COMMAND /usr/local/bin/git-proxy.sh
 
-#libdrm 2.4.75
-RUN git clone git://anongit.freedesktop.org/git/mesa/drm --branch libdrm-2.4.75 --single-branch
+#libdrm tag:libdrm-2.4.75
+RUN git clone git://anongit.freedesktop.org/git/mesa/drm --depth 1 --branch libdrm-2.4.75 
 RUN cd $mesa_installation_dir/drm && \
 	./autogen.sh CFLAGS='-O2' CXXFLAGS='-O2' --prefix=$mesa_installation_dir && \
-	make && \
+	make -j8 && \
 	make install
-#mesa 17.0.1
 
+#mesa tag:mesa-17.0.1, Create a shallow clone with a history truncated to the ONE specified commit to save size
+RUN cd $mesa_installation_dir/
+RUN git clone git://anongit.freedesktop.org/git/mesa/mesa --depth 1 --branch mesa-17.0.1 
+RUN cd $mesa_installation_dir/mesa && \
+	./autogen.sh CFLAGS='-O2' CXXFLAGS='-O2' --prefix=$mesa_installation_dir --with-dri-drivers="i915 i965" \
+	--with-dri-driverdir=$prefix/lib/dri --enable-gles1 --enable-gles2 --enable-shared-glapi --with-gallium-drivers= \
+	--with-egl-platforms=x11,drm --enable-texture-float --enable-gbm --enable-glx-tls --enable-dri3 --enable-debug && \
+	make -j8 && \
+	make install
 #libva 1.8.0
 
 #vaapi intel driver 1.8.0
