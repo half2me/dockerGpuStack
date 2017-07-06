@@ -2,8 +2,13 @@
 generate a workable/stable image supporting Intel GPU container feature, to align Intel quarterly GPU driver release, including MESA, libva, etc
 
 # Build the image
-To build the image, Change to the directory like 2017Q1Stack/
-Execute build.sh to build the ubuntu based image and install (all!) available opensource release drivers.
+To build the image, Change to the directory like 2017Q1Stack/, just execute build.sh to build the ubuntu based image and install (all!) available opensource release drivers.
+	#!/bin/sh
+	#add --build-arg http_proxy=xxxx if under internal proxy network
+	sudo docker build  -t ubuntu_intel_gpu_stack:2017q1 .
+
+if you're under proxy network, the address of proxy is like http://proxy-xx.xxx.com:xxx/, you need change the build.sh
+	sudo docker build -t --build-arg http_proxy="http://proxy-xx.xxx.com:xxx/" --build-arg https_proxy="http://proxy-xx.xxx.com:xxx/" --build-arg no_proxy="localhost,127.0.0.1,.xxx.com" -t ubuntu_intel_gpu_stack:2017q1 .
 
 # Create a container 
 Execute ./run.sh in the corresponding subdirectory to get a bash prompt in the created docker container.
