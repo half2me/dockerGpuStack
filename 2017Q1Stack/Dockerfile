@@ -2,46 +2,37 @@ FROM ubuntu:16.04
 LABEL maintainer  "Libo Zhu <libo.zhu@intel.com>"
 
 ADD sources.list /etc/apt/sources.list
-ENV http_proxy http://proxy-shz.intel.com:911/
-ENV https_proxy http://proxy-shz.intel.com:911/
-ENV ftp_proxy http://proxy-shz.intel.com:911/
-ENV no_proxy localhost,127.0.0.1,.intel.com
 RUN apt-get update
 
 #dependency pakcages, add connect-proxy just in case. remove it for external user
 RUN apt-get build-dep libdrm mesa -y
 RUN apt-get install -y linux-headers-`uname -r` \
 	libxi-dev libxmu-dev x11proto-xf86vidmode-dev \
-	git autoconf automake libtool \
-	connect-proxy \
+	autoconf automake libtool \
+	curl \
 	&& rm -rf /var/lib/apt/lists/*
 
 LABEL GPU_STACK_VERSION "2017Q1"
 
-RUN mkdir -p /opt/mesa-debug
 
-WORKDIR /opt/mesa-debug
+WORKDIR /usr/local/
 
-ENV mesa_installation_dir=/opt/mesa-debug
-ENV LIBGL_DRIVERS_PATH=$mesa_installation_dir/lib/dri
-ENV LD_LIBRARY_PATH=$mesa_installation_dir/lib
+ENV mesa_installation_dir=/usr/local/ LIBGL_DRIVERS_PATH=$mesa_installation_dir/lib/dri \
+	LD_LIBRARY_PATH=$mesa_installation_dir/lib
 
-#add git proxy in case
-ADD git-proxy.sh /usr/local/bin/git-proxy.sh
-RUN chmod +x /usr/local/bin/git-proxy.sh 
-ENV GIT_PROXY_COMMAND /usr/local/bin/git-proxy.sh
 
 #libdrm tag:libdrm-2.4.75
-RUN git clone git://anongit.freedesktop.org/git/mesa/drm --depth 1 --branch libdrm-2.4.75 
-RUN cd $mesa_installation_dir/drm && \
-	./autogen.sh CFLAGS='-O2' CXXFLAGS='-O2' --prefix=$mesa_installation_dir && \
+RUN curl https://dri.freedesktop.org/libdrm/libdrm-2.4.75.tar.gz -o $mesa_installation_dir/libdrm-2.4.75.tar.gz
+RUN tar -xvzf libdrm-2.4.75.tar.gz && \
+	cd $mesa_installation_dir/libdrm-2.4.75/ && \
+	./configure CFLAGS='-O2' CXXFLAGS='-O2' --prefix=$mesa_installation_dir && \
 	make -j8 && \
 	make install
 
-#mesa tag:mesa-17.0.1, Create a shallow clone with a history truncated to the ONE specified commit to save size
-RUN cd $mesa_installation_dir/
-RUN git clone git://anongit.freedesktop.org/git/mesa/mesa --depth 1 --branch mesa-17.0.1 
-RUN cd $mesa_installation_dir/mesa && \
+#mesa tag:mesa-17.0.1, 
+RUN cd $mesa_installation_dir/ && curl https://mesa.freedesktop.org/archive/mesa-17.0.1.tar.gz -o $mesa_installation_dir/mesa-17.0.1.tar.gz
+RUN tar -xvzf mesa-17.0.1.tar.gz && \
+	cd $mesa_installation_dir/mesa-17.0.1 && \
 	./autogen.sh CFLAGS='-O2' CXXFLAGS='-O2' --prefix=$mesa_installation_dir --with-dri-drivers="i915 i965" \
 	--with-dri-driverdir=$prefix/lib/dri --enable-gles1 --enable-gles2 --enable-shared-glapi --with-gallium-drivers= \
 	--with-egl-platforms=x11,drm --enable-texture-float --enable-gbm --enable-glx-tls --enable-dri3 --enable-debug && \
@@ -49,20 +40,20 @@ RUN cd $mesa_installation_dir/mesa && \
 	make install
 
 #libva 1.8.0
-RUN cd $mesa_installation_dir/ && \
-	git clone https://github.com/01org/libva --depth 1 --branch 1.8.0 
-RUN cd $mesa_installation_dir/libva && \
-	./autogen.sh CFLAGS='-O2' CXXFLAGS='-O2' \
-	--prefix=$mesa_installation_dir --enable-wayland=0 && \
+RUN cd $mesa_installation_dir/ && curl https://www.freedesktop.org/software/vaapi/releases/libva/libva-1.8.0.tar.bz2 -o $mesa_installation_dir/libva-1.8.0.tar.bz2
+RUN  bzip2 -d libva-1.8.0.tar.bz2 && \
+	tar -xvf libva-1.8.0.tar && \
+	cd $mesa_installation_dir/libva-1.8.0 && \
+	./configure CFLAGS='-O2' CXXFLAGS='-O2' --prefix=$mesa_installation_dir --enable-wayland=0 && \
 	make -j8 && \
 	make install 
   
 #vaapi intel driver 1.8.0
-RUN cd $mesa_installation_dir/ && \
-	git clone https://github.com/01org/intel-vaapi-driver --depth 1 --branch 1.8.0 
+RUN cd $mesa_installation_dir/ && curl https://www.freedesktop.org/software/vaapi/releases/libva-intel-driver/intel-vaapi-driver-1.8.0.tar.bz2 -o $mesa_installation_dir/intel-vaapi-driver-1.8.0.tar.bz2
 ENV PKG_CONFIG_PATH=$mesa_installation_dir/lib/pkgconfig/:$PKG_CONFIG_PATH
-RUN cd $mesa_installation_dir/intel-vaapi-driver && \
-	./autogen.sh CFLAGS='-O2' CXXFLAGS='-O2'  --prefix=$mesa_installation_dir \
-	--enable-wayland=0 && \
+RUN bzip2 -d intel-vaapi-driver-1.8.0.tar.bz2 && \
+	tar -xvf intel-vaapi-driver-1.8.0.tar && \
+	cd $mesa_installation_dir/intel-vaapi-driver-1.8.0 && \
+	./configure  CFLAGS='-O2' CXXFLAGS='-O2'  --prefix=$mesa_installation_dir --enable-wayland=0 && \
 	make -j8 && \
 	make install	
