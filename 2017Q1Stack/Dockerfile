@@ -17,7 +17,8 @@ LABEL GPU_STACK_VERSION "2017Q1"
 
 WORKDIR /usr/local/
 
-ENV mesa_installation_dir=/usr/local/ LIBGL_DRIVERS_PATH=$mesa_installation_dir/lib/dri \
+ENV mesa_installation_dir=/usr/local/ 
+ENV LIBGL_DRIVERS_PATH=$mesa_installation_dir/lib/dri \
 	LD_LIBRARY_PATH=$mesa_installation_dir/lib
 
 
