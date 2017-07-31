@@ -28,18 +28,18 @@ docker run --rm --device /dev/dri/renderD128 sample:vainfoTest
 
 Here is a possible output for a container based on the sample:vainfoTest image:
 >
-		error: XDG_RUNTIME_DIR not set in the environment.
-		error: can't connect to X server!
-		libva info: VA-API version 0.40.0
-		libva info: va_getDriverName() returns 0
-		libva info: Trying to open /opt/mesa-debug/lib/dri/i965_drv_video.so
-		libva info: Found init function __vaDriverInit_0_40
-		libva info: va_openDriver() returns 0
-		vainfo: VA-API version: 0.40 (libva )
-		vainfo: Driver version: Intel i965 driver for Intel(R) Skylake - 1.8.0
-		vainfo: Supported profile and entrypoints
-      			VAProfileMPEG2Simple            : VAEntrypointVLD
-      			VAProfileMPEG2Simple            : VAEntrypointEncSlice
-      			VAProfileMPEG2Main              : VAEntrypointVLD
+	error: XDG_RUNTIME_DIR not set in the environment.
+	error: can't connect to X server!
+	libva info: VA-API version 0.40.0
+	libva info: va_getDriverName() returns 0
+	libva info: Trying to open /opt/mesa-debug/lib/dri/i965_drv_video.so
+	libva info: Found init function __vaDriverInit_0_40
+	libva info: va_openDriver() returns 0
+	vainfo: VA-API version: 0.40 (libva )
+	vainfo: Driver version: Intel i965 driver for Intel(R) Skylake - 1.8.0
+	vainfo: Supported profile and entrypoints
+      		VAProfileMPEG2Simple            : VAEntrypointVLD
+      		VAProfileMPEG2Simple            : VAEntrypointEncSlice
+      		VAProfileMPEG2Main              : VAEntrypointVLD
 
 
