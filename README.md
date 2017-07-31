@@ -4,22 +4,27 @@ Generate a workable/stable image supporting Intel GPU container feature, to alig
 ## Build the image
 To build the image, Change to the directory like 2017Q1Stack/, just execute build.sh to build the ubuntu based image and install (all!) available opensource release drivers. <br>
 ```Bash
-		#!/bin/sh
-		#add --build-arg http_proxy=xxxx if under internal proxy network
-		sudo docker build  -t ubuntu_intel_gpu_stack:2017q1 .
+#!/bin/sh
+#add --build-arg http_proxy=xxxx if under internal proxy network
+sudo docker build  -t ubuntu_intel_gpu_stack:2017q1 .
 ```
 if you're under proxy network, the address of proxy is like http://proxy-xx.xxx.com:xxx/, you need change the build.sh
-		sudo docker build -t --build-arg http_proxy="http://proxy-xx.xxx.com:xxx/" --build-arg https_proxy="http://proxy-xx.xxx.com:xxx/" --build-arg no_proxy="localhost,127.0.0.1,.xxx.com" -t ubuntu_intel_gpu_stack:2017q1 .
-
+```Bash
+sudo docker build -t --build-arg http_proxy="http://proxy-xx.xxx.com:xxx/" --build-arg https_proxy="http://proxy-xx.xxx.com:xxx/" --build-arg no_proxy="localhost,127.0.0.1,.xxx.com" -t ubuntu_intel_gpu_stack:2017q1 .
+```
 ## Create a container 
 Execute ./run.sh in the corresponding subdirectory to get a bash prompt in the created docker container.
 
 ## Testing the samples
 A few examples of Dockerfiles are provided in the samples/ folder, these images can be used to quickly test the gpu stack on your machine. The samples are not available on the Docker Hub, you will need to build the images locally:
-		docker build --build-arg http_proxy="http://proxy-shz.intel.com:911/" -t sample:vainfoTest samples/vainfoTest/
+```Bash
+docker build --build-arg http_proxy="http://proxy-shz.intel.com:911/" -t sample:vainfoTest samples/vainfoTest/
+```
 
 use docker to  test the samples:
-		docker run --rm --device /dev/dri/renderD128 sample:vainfoTest
+```Bash
+docker run --rm --device /dev/dri/renderD128 sample:vainfoTest
+```
 
 Here is a possible output for a container based on the sample:vainfoTest image:
 		error: XDG_RUNTIME_DIR not set in the environment.
