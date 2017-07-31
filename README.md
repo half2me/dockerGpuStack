@@ -27,6 +27,7 @@ docker run --rm --device /dev/dri/renderD128 sample:vainfoTest
 ```
 
 Here is a possible output for a container based on the sample:vainfoTest image:
+>
 		error: XDG_RUNTIME_DIR not set in the environment.
 		error: can't connect to X server!
 		libva info: VA-API version 0.40.0
